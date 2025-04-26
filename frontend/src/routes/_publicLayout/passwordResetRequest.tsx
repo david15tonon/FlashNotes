@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { Container, Field, Fieldset, Text } from '@chakra-ui/react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { DefaultButton } from '../../components/commonUI/Button'
@@ -8,7 +8,11 @@ import { DefaultInput } from '../../components/commonUI/Input'
 function PasswordResetRequest() {
   const { t } = useTranslation()
   const [success, setSuccess] = useState(false)
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<{ email: string }>()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<{ email: string }>()
 
   const onSubmit = async (data: { email: string }) => {
     try {

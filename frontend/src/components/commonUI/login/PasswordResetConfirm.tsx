@@ -1,10 +1,15 @@
-import React, { useState } from 'react'
+import type React from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 
 export const PasswordResetConfirm: React.FC = () => {
   const { token } = useParams<{ token: string }>()
-  const { register, handleSubmit, formState: { errors } } = useForm<{ newPassword: string }>()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<{ newPassword: string }>()
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 

@@ -1,8 +1,13 @@
-import React, { useState } from 'react'
+import type React from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export const PasswordResetRequest: React.FC = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<{ email: string }>()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<{ email: string }>()
   const [success, setSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
