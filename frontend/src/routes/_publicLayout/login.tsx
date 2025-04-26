@@ -116,7 +116,7 @@ function Login() {
         </Fieldset.Root>
       </form>
       <Text color="fg.primary" mt={2}>
-        <Link to ="/password-reset-request" style={{ color: '#007bff', textDecoration: 'underline' }}>
+        <Link to="/password-reset-request" style={{ color: '#007bff', textDecoration: 'underline' }}>
           {t('general.actions.forgotPassword')}
         </Link>
       </Text>
