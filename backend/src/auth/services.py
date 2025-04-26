@@ -1,4 +1,7 @@
+import smtplib
 from datetime import datetime, timedelta, timezone
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from typing import Annotated, Any
 
 import jwt
@@ -8,11 +11,6 @@ from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 from pydantic import ValidationError
 from sqlmodel import Session
-
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from src.core.config import settings
 
 from src.auth.schemas import TokenPayload
 from src.core.config import settings
@@ -99,7 +97,7 @@ def send_reset_email(email: str, reset_token: str) -> None:
     Best regards,
     FlashNotes Team
     """
-    
+
     # Create MIME email message
     message = MIMEMultipart()
     message["From"] = settings.EMAIL_SENDER

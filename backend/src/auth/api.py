@@ -1,16 +1,16 @@
 from datetime import timedelta
 from typing import Annotated
 
+import jwt
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.auth.schemas import Token
-from src.auth.services import SessionDep
-from src.core.config import settings
-from src.auth.services import send_reset_email
-from . import services
-import jwt
 from core.config import ALGORITHM
+from src.auth.schemas import Token
+from src.auth.services import SessionDep, send_reset_email
+from src.core.config import settings
+
+from . import services
 
 router = APIRouter()
 
@@ -32,6 +32,8 @@ def login_access_token(
             user.id, expires_delta=access_token_expires
         )
     )
+
+
 @router.post("/password-reset")
 def password_reset_request(email: str, session: SessionDep):
     user = services.get_user_by_email(session=session, email=email)
@@ -42,6 +44,7 @@ def password_reset_request(email: str, session: SessionDep):
     send_reset_email(user.email, reset_token)
     return {"message": "Password reset email sent"}
 
+
 @router.post("/password-reset/confirm")
 def reset_password_confirm(token: str, new_password: str, session: SessionDep):
     try:
@@ -51,7 +54,7 @@ def reset_password_confirm(token: str, new_password: str, session: SessionDep):
             raise HTTPException(status_code=400, detail="Invalid token")
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=400, detail="Token expired")
-    
+
     user = services.get_user_by_email(session=session, email=email)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
