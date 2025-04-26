@@ -9,6 +9,11 @@ from passlib.context import CryptContext
 from pydantic import ValidationError
 from sqlmodel import Session
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from src.core.config import settings
+
 from src.auth.schemas import TokenPayload
 from src.core.config import settings
 from src.core.db import get_db
@@ -67,3 +72,48 @@ def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
+
+
+def send_reset_email(email: str, reset_token: str) -> None:
+    """
+    Send a password reset email to the specified email address.
+
+    Args:
+        email (str): The recipient's email address.
+        reset_token (str): The token used to reset the password.
+    """
+    # Construct the password reset URL
+    reset_url = f"{settings.FRONTEND_BASE_URL}/reset-password?token={reset_token}"
+
+    # Email content
+    subject = "Password Reset Request"
+    body = f"""
+    Hello,
+
+    You requested a password reset. Please click the link below to reset your password:
+
+    {reset_url}
+
+    If you did not request this, please ignore this email.
+
+    Best regards,
+    FlashNotes Team
+    """
+    
+    # Create MIME email message
+    message = MIMEMultipart()
+    message["From"] = settings.EMAIL_SENDER
+    message["To"] = email
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "plain"))
+
+    # Send the email
+    try:
+        with smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT) as server:
+            server.starttls()
+            server.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
+            server.sendmail(settings.EMAIL_SENDER, email, message.as_string())
+        print(f"Password reset email sent to {email}")
+    except Exception as e:
+        print(f"Failed to send email to {email}: {e}")
+        raise

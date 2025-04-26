@@ -7,13 +7,13 @@ import { useTranslation } from 'react-i18next'
 import type { Body_login_login_access_token as AccessToken } from '../../client'
 import { DefaultButton } from '../../components/commonUI/Button'
 import { DefaultInput } from '../../components/commonUI/Input'
-import { emailPattern } from '../../utils'
+
+// Définition d'emailPattern
+const emailPattern = /^\S+@\S+\.\S+$/;
 
 export const Route = createFileRoute('/_publicLayout/login')({
   component: Login,
   beforeLoad: async () => {
-    // NOTE: Direct localStorage access is used here because React context is not available in router guards.
-    // For all React components, use useAuthContext() from './hooks/useAuthContext' instead.
     const isGuest = localStorage.getItem('guest_mode') === 'true'
     const isLoggedIn = Boolean(localStorage.getItem('access_token')) || isGuest
     if (isLoggedIn) {
@@ -82,7 +82,10 @@ function Login() {
                 placeholder={t('general.words.email')}
                 {...register('username', {
                   required: t('general.errors.usernameIsRequired'),
-                  pattern: emailPattern,
+                  pattern: {
+                    value: emailPattern,
+                    message: t('general.errors.invalidEmail'),
+                  },
                 })}
               />
               {errors.username && (
@@ -112,12 +115,9 @@ function Login() {
           </DefaultButton>
         </Fieldset.Root>
       </form>
-      <Text>
-        {t('routes.publicLayout.login.dontHaveAccount')}{' '}
-        <Link to="/signup">
-          <Text as="span" color="blue.500">
-            {t('general.actions.signUp')}
-          </Text>
+      <Text color="fg.primary" mt={2}>
+        <Link to ="/password-reset-request" style={{ color: '#007bff', textDecoration: 'underline' }}>
+          {t('general.actions.forgotPassword')}
         </Link>
       </Text>
     </Container>
