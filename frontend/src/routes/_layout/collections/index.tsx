@@ -1,7 +1,7 @@
 import type { Collection } from '@/client/types.gen'
-import AiCollectionDialog from '@/components/collections/AiCollectionDialog'
 import CollectionDialog from '@/components/collections/CollectionDialog'
 import CollectionListItem from '@/components/collections/CollectionListItem'
+import AiPromptDialog from '@/components/commonUI/AiPromptDialog'
 import EmptyState from '@/components/commonUI/EmptyState'
 import ErrorState from '@/components/commonUI/ErrorState'
 import ListSkeleton from '@/components/commonUI/ListSkeleton'
@@ -139,11 +139,13 @@ function Collections() {
         onClose={() => setIsAddDialogOpen(false)}
         onSubmit={addCollection}
       />
-      <AiCollectionDialog
+      <AiPromptDialog
         isOpen={isAiDialogOpen}
         onClose={() => setIsAiDialogOpen(false)}
         onSubmit={addAiCollection}
         isLoading={isCreatingAiCollection}
+        title={t('components.AiCollectionDialog.title')}
+        placeholder={t('components.AiCollectionDialog.placeholder')}
       />
     </>
   )

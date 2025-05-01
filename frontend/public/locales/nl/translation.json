@@ -1,5 +1,9 @@
 {
   "components": {
+    "AiCardDialog": {
+      "placeholder": "Voer een enkel woord of begrip in",
+      "title": "Maak een flashcard met AI"
+    },
     "AiCollectionDialog": {
       "placeholder": "Voer een onderwerp of concept in (bijv. 'Kwantumfysica', 'Spaanse Werkwoorden')",
       "title": "Maak een collectie met AI"
@@ -21,6 +25,10 @@
       "inlineCode": "Inline Code",
       "numberedList": "Genummerde Lijst",
       "bulletList": "Lijst met Opsommingstekens"
+    },
+    "editorFooter": {
+      "acceptAiSuggestion": "Accepteren en aanmaken",
+      "rejectAiSuggestion": "Afwijzen en opnieuw vragen"
     },
     "practiceComplete": {
       "cardsCorrect": "Je hebt {{correct}} van de {{total}} kaarten goed",
@@ -65,11 +73,18 @@
     "guestModeNotice": {
       "message": "Je bent momenteel offline.",
       "messageWithAction": "Je bent offline. Gegevens kunnen verloren gaan. Log in om je voortgang op te slaan."
+    },
+    "analyticsConsent": {
+      "title": "Wij gebruiken cookies",
+      "description": "We gebruiken cookies om je ervaring te verbeteren en het gebruik van de site te analyseren. Accepteer of weiger cookies om FlashNotes te blijven gebruiken.",
+      "accept": "Accepteren",
+      "decline": "Weigeren"
     }
   },
   "general": {
     "actions": {
       "addCard": "Kaart Toevoegen",
+      "generateAiCard": "Kaart toevoegen met AI",
       "addCollection": "Collectie Toevoegen",
       "backToCollection": "Terug naar Collectie",
       "cancel": "Annuleren",

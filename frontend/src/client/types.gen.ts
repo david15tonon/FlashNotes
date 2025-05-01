@@ -26,6 +26,7 @@ export type CardBasicStats = {
 export type CardCreate = {
   front: string
   back: string
+  prompt?: string | null
 }
 
 export type CardList = {
@@ -140,7 +141,6 @@ export type UserPublic = {
   email: string
   is_active?: boolean
   is_superuser?: boolean
-  full_name?: string | null
   id: string
 }
 

@@ -1,5 +1,9 @@
 {
   "components": {
+    "AiCardDialog": {
+      "placeholder": "Introduce una palabra o concepto",
+      "title": "Crea una tarjeta (frente y reverso) con IA"
+    },
     "AiCollectionDialog": {
       "placeholder": "Introduce un tema o concepto (por ejemplo, 'Física Cuántica', 'Verbos en Inglés')",
       "title": "Crear una colección con IA"
@@ -21,6 +25,10 @@
       "inlineCode": "Código en Línea",
       "numberedList": "Lista Numerada",
       "bulletList": "Lista con Viñetas"
+    },
+    "editorFooter": {
+      "acceptAiSuggestion": "Aceptar y crear",
+      "rejectAiSuggestion": "Rechazar y reintentar prompt"
     },
     "practiceComplete": {
       "cardsCorrect": "Has acertado {{correct}} de {{total}} tarjetas",
@@ -65,11 +73,18 @@
     "guestModeNotice": {
       "message": "Actualmente estás sin conexión.",
       "messageWithAction": "Estás sin conexión. Los datos pueden perderse. Inicia sesión para guardar tu progreso."
+    },
+    "analyticsConsent": {
+      "title": "Usamos cookies",
+      "description": "Usamos cookies para mejorar tu experiencia y analizar el uso del sitio. Por favor, acepta o rechaza las cookies para continuar usando FlashNotes.",
+      "accept": "Aceptar",
+      "decline": "Rechazar"
     }
   },
   "general": {
     "actions": {
       "addCard": "Agregar Tarjeta",
+      "generateAiCard": "Agregar tarjeta con IA",
       "addCollection": "Agregar Colección",
       "backToCollection": "Volver a la Colección",
       "cancel": "Cancelar",

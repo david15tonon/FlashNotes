@@ -1,16 +1,23 @@
+import { isGuest } from '@/utils/authUtils'
 import { Box, Button, Flex } from '@chakra-ui/react'
 import { useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { IoStatsChart } from 'react-icons/io5'
 import { MdSchool } from 'react-icons/md'
+import { PiSparkle } from 'react-icons/pi'
 import { VscAdd } from 'react-icons/vsc'
 
 interface CollectionActionHeaderProps {
   collectionId: string
   cardCount: number
+  onGenerateAICard: () => void
 }
 
-function CollectionActionHeader({ collectionId, cardCount }: CollectionActionHeaderProps) {
+function CollectionActionHeader({
+  collectionId,
+  cardCount,
+  onGenerateAICard,
+}: CollectionActionHeaderProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
@@ -25,6 +32,18 @@ function CollectionActionHeader({ collectionId, cardCount }: CollectionActionHea
         <VscAdd />
         <Box as="span" ml={2} display={{ base: 'none', md: 'inline' }}>
           {t('general.actions.addCard')}
+        </Box>
+      </Button>
+      <Button
+        variant="ghost"
+        _hover={{ bg: 'bg.50' }}
+        onClick={onGenerateAICard}
+        aria-label={t('general.actions.generateAiCard')}
+        disabled={isGuest()}
+      >
+        <PiSparkle />
+        <Box as="span" ml={2} display={{ base: 'none', md: 'inline' }}>
+          {t('general.actions.generateAiCard')}
         </Box>
       </Button>
       <Button

@@ -1,3 +1,4 @@
+import asyncio
 import uuid
 from typing import Any, Literal
 
@@ -46,25 +47,28 @@ async def create_collection(
     collection_in: CollectionCreate,
     provider: GeminiProviderDep,
 ) -> Any:
+    name = collection_in.name
+    cards = None
+
     if collection_in.prompt:
         try:
-            collection = await services.generate_ai_collection(
-                session=session,
-                user_id=current_user.id,
-                prompt=collection_in.prompt,
-                provider=provider,
+            flashcard_collection = await services.generate_ai_collection(
+                provider, collection_in.prompt
             )
-            return collection
+            name = flashcard_collection.name
+            cards = flashcard_collection.cards
         except EmptyCollectionError:
             raise HTTPException(
                 status_code=400, detail="Failed to generate flashcards from the prompt"
             )
         except AIGenerationError as e:
             raise HTTPException(status_code=500, detail=str(e))
-    else:
-        return services.create_collection(
-            session=session, collection_in=collection_in, user_id=current_user.id
+
+    return await asyncio.to_thread(
+        lambda: services.create_collection(
+            session=session, user_id=current_user.id, name=name, cards=cards
         )
+    )
 
 
 @router.get("/collections/{collection_id}", response_model=Collection)
@@ -126,16 +130,28 @@ def read_cards(
 
 
 @router.post("/collections/{collection_id}/cards/", response_model=Card)
-def create_card(
+async def create_card(
     session: SessionDep,
     current_user: CurrentUser,
     collection_id: uuid.UUID,
     card_in: CardCreate,
+    provider: GeminiProviderDep,
 ) -> Any:
-    if not services.check_collection_access(session, collection_id, current_user.id):
+    access_checked = await asyncio.to_thread(
+        lambda: services.check_collection_access(
+            session, collection_id, current_user.id
+        )
+    )
+    if not access_checked:
         raise HTTPException(status_code=404, detail="Collection not found")
-    return services.create_card(
-        session=session, collection_id=collection_id, card_in=card_in
+    if card_in.prompt:
+        card_base = await services.generate_ai_flashcard(card_in.prompt, provider)
+        card_in.front = card_base.front
+        card_in.back = card_base.back
+    return await asyncio.to_thread(
+        lambda: services.create_card(
+            session=session, collection_id=collection_id, card_in=card_in
+        )
     )
 
 

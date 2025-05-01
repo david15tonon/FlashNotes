@@ -1,5 +1,9 @@
 {
   "components": {
+    "AiCardDialog": {
+      "placeholder": "Enter a single word or concept",
+      "title": "Create a flashcard with AI"
+    },
     "AiCollectionDialog": {
       "placeholder": "Enter a topic or concept (e.g., 'Quantum Physics', 'Spanish Verbs')",
       "title": "Create a collection with AI"
@@ -21,6 +25,10 @@
       "inlineCode": "Inline Code",
       "numberedList": "Numbered List",
       "bulletList": "Bullet List"
+    },
+    "editorFooter": {
+      "acceptAiSuggestion": "Accept and create",
+      "rejectAiSuggestion": "Reject and reprompt"
     },
     "practiceComplete": {
       "cardsCorrect": "You got {{correct}} out of {{total}} cards correct",
@@ -65,11 +73,18 @@
     "guestModeNotice": {
       "message": "You are currently offline.",
       "messageWithAction": "You are offline. Data may be lost. Log in to save your progress."
+    },
+    "analyticsConsent": {
+      "title": "We use cookies",
+      "description": "We use cookies to improve your experience and analyze site usage. Please accept or decline cookies to continue using FlashNotes.",
+      "accept": "Accept",
+      "decline": "Decline"
     }
   },
   "general": {
     "actions": {
       "addCard": "Add Card",
+      "generateAiCard": "Add Card with AI",
       "addCollection": "Add Collection",
       "backToCollection": "Back to Collection",
       "cancel": "Cancel",

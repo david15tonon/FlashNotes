@@ -10,14 +10,14 @@ from sqlmodel import Session, func, select
 
 from src.ai_models.gemini.exceptions import AIGenerationError
 
-from .ai_config import get_flashcard_config
+from .ai_config import get_card_config, get_flashcard_config
 from .exceptions import EmptyCollectionError
 from .models import Card, Collection, PracticeCard, PracticeSession
 from .schemas import (
     AIFlashcardCollection,
+    CardBase,
     CardCreate,
     CardUpdate,
-    CollectionCreate,
     CollectionUpdate,
 )
 
@@ -48,11 +48,22 @@ def get_collection(
 
 
 def create_collection(
-    session: Session, collection_in: CollectionCreate, user_id: uuid.UUID
+    session: Session, user_id: uuid.UUID, name: str, cards: list[CardBase] | None = None
 ) -> Collection:
-    collection = Collection.model_validate(collection_in, update={"user_id": user_id})
-    collection.user_id = user_id
+    collection = Collection(name=name, user_id=user_id)
     session.add(collection)
+    session.flush()
+
+    if cards:
+        card_objs = [
+            Card(
+                front=card.front,
+                back=card.back,
+                collection_id=collection.id,
+            )
+            for card in cards
+        ]
+        session.add_all(card_objs)
     session.commit()
     session.refresh(collection)
     return collection
@@ -314,23 +325,6 @@ def get_practice_cards(
     return practice_cards, count
 
 
-def get_next_card(
-    session: Session, practice_session_id: uuid.UUID
-) -> tuple[Card, PracticeCard] | None:
-    statement = (
-        select(PracticeCard, Card)
-        .join(Card, PracticeCard.card_id == Card.id)
-        .where(
-            PracticeCard.session_id == practice_session_id,
-            PracticeCard.is_practiced.is_not(True),
-        )
-        .limit(1)
-    )
-    result = session.exec(statement).first()
-    if result:
-        return result[1], result[0]
-
-
 def get_practice_card(
     session: Session,
     practice_session_id: uuid.UUID,
@@ -373,18 +367,12 @@ def record_practice_card_result(
     return practice_card
 
 
-def get_session_statistics(
-    session: Session, practice_session_id: uuid.UUID
-) -> PracticeSession:
-    return session.get(PracticeSession, practice_session_id)
-
-
 def get_card_by_id(session: Session, card_id: uuid.UUID) -> Card | None:
     statement = select(Card).where(Card.id == card_id)
     return session.exec(statement).first()
 
 
-async def _generate_ai_flashcards(provider, prompt: str) -> AIFlashcardCollection:
+async def generate_ai_collection(provider, prompt: str) -> AIFlashcardCollection:
     content_config = get_flashcard_config(genai.types)
     raw_response = await provider.run_model(content_config, prompt)
 
@@ -405,33 +393,18 @@ async def _generate_ai_flashcards(provider, prompt: str) -> AIFlashcardCollectio
         raise AIGenerationError(f"Error processing AI response: {str(e)}")
 
 
-def _save_ai_collection(
-    session: Session, user_id: uuid.UUID, flashcard_collection: AIFlashcardCollection
-) -> Collection:
-    collection = Collection(
-        name=flashcard_collection.name,
-        user_id=user_id,
-    )
-    session.add(collection)
-    session.commit()
-    session.refresh(collection)
-
-    for card_data in flashcard_collection.cards:
-        card = Card(
-            front=card_data.front,
-            back=card_data.back,
-            collection_id=collection.id,
-        )
-        session.add(card)
-
-    session.commit()
-    session.refresh(collection)
-    return collection
-
-
-async def generate_ai_collection(
-    session: Session, user_id: uuid.UUID, prompt: str, provider
-) -> Collection:
-    """Generate a collection of flashcards using AI and save it to the database."""
-    flashcard_collection = await _generate_ai_flashcards(provider, prompt)
-    return _save_ai_collection(session, user_id, flashcard_collection)
+async def generate_ai_flashcard(prompt: str, provider) -> CardBase:
+    content_config = get_card_config(genai.types)
+    raw_response = await provider.run_model(content_config, prompt)
+    try:
+        json_data = json.loads(raw_response)
+        if "front" not in json_data or "back" not in json_data:
+            raise AIGenerationError("AI response missing 'front' or 'back' field")
+        card = CardBase(front=json_data["front"], back=json_data["back"])
+        return card
+    except json.JSONDecodeError:
+        raise AIGenerationError("Failed to parse AI response as JSON")
+    except ValidationError as e:
+        raise AIGenerationError(f"Invalid AI response format: {str(e)}")
+    except Exception as e:
+        raise AIGenerationError(f"Error processing AI response: {str(e)}")
