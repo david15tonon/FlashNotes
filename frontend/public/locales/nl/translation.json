@@ -88,6 +88,8 @@
   "general": {
     "actions": {
       "addCard": "Kaart Toevoegen",
+      "aiQuotaResetDate": "Datum van herstart van AI-quota",
+      "aiUsageLeft": "Overgebleven AI-gebruik",
       "generateAiCard": "Kaart toevoegen met AI",
       "addCollection": "Collectie Toevoegen",
       "backToCollection": "Terug naar Collectie",
@@ -123,6 +125,7 @@
       "emailIsRequired": "E-mail is vereist",
       "errorCreatingAccount": "Fout bij het aanmaken van account",
       "errorLoadingCard": "Fout bij het laden van kaart",
+      "errorLoadingAIUsageQuota": "Fout bij het laden van AI-gebruiksquota",
       "errorSavingCard": "Fout bij het opslaan van kaart",
       "invalidCredentials": "Ongeldige inloggegevens",
       "invalidName": "Ongeldige naam",
